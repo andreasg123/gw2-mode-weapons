@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, Helvetica, sansserif;
+    font-size: 90%;
+    background-color: #181411;
+    color: white;
+}
+a {
+    color: white;
+}
+table {
+    border-collapse: collapse;
+}
+td {
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+td {
+    padding-top: 0.35em;
+    padding-bottom: 0.35em;
+    padding-left: 0;
+    padding-right: 6px;
+}
+tr.alt td {
+    background-color: #231f1c;
+}
+input, select {
+    background-color: #181411;
+    color: white;
+    border: 1px solid #e5cbb8;
+    border-radius: 2px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+}
+tr.alt td input, tr.alt td select {
+    background-color: #231f1c;
+}
+td img {
+    cursor: pointer;
+}
+#json {
+    width: 100%;
+}
+.center {
+    text-align: center;
+}
+select.weapon {
+    width: 7em;
+}
