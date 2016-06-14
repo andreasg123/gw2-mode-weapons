@@ -98,7 +98,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             delete build[m][j][h];
         }
     }
-    //console.log('updateProfession', build);
   }
 
   function displayWeapons(profession, elite, weapons) {
@@ -113,7 +112,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       if (i > 0)
         html += '<br/>';
       const selected = (weapons && weapons[i]) || {};
-      //console.log('selected', selected);
       for (let j = 0; j < hands.length; j++) {
         html += '<select class="weapon"';
         if (hands[j] === 'off' && isTwoHanded(selected.main))
@@ -135,7 +133,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
   
   function displayBuild(build) {
-    //console.log('displayBuild', build);
     let html = '';
     html += '<td><input type="text" size="15"';
     if (build && build.name)
@@ -169,7 +166,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       data.builds[index][mode][slot][hand] = e.target.value;
       if (isTwoHanded(e.target.value))
         delete data.builds[index][mode][slot].off;
-      //console.log('handleWeapon', index, data.builds[index]);
       displayBuilds();
     };
   }
@@ -177,7 +173,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   function handleProfession(index) {
     return function(e) {
       data.builds[index] = data.builds[index] || {};
-      //console.log('handleProfession', index, e);
       data.builds[index].profession = e.target.value;
       updateProfession(data.builds[index]);
       displayBuilds();
@@ -196,7 +191,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   function handleElite(index) {
     return function(e) {
       data.builds[index] = data.builds[index] || {};
-      //console.log('handleElite', index, e.target.checked, e);
       data.builds[index].elite = e.target.checked;
       updateProfession(data.builds[index]);
       displayBuilds();
@@ -238,7 +232,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       if (correct)
         for (let i = 0; i < new_modes.length; i++)
           if (all_modes.indexOf(new_modes[i]) < 0) {
-            //console.log('bad mode');
             correct = false;
             break;
           }
@@ -256,7 +249,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           }
           if (b.elite) {
             if (typeof b.elite !== 'boolean') {
-              //console.log('bad elite');
               correct = false;
               break;
             }
@@ -265,7 +257,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           if (!b.profession)
             continue;
           if (professions.indexOf(b.profession) < 0) {
-            //console.log('bad profession', b.profession);
             correct = false;
             break;
           }
@@ -280,19 +271,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               continue;
             b2[m] = [];
             for (let k = 0; k < count; k++) {
-              //console.log('', k, ws[k]);
               if (!ws[k])
                 continue;
               const ws2 = {};
               b2[m].push(ws2);
               if (typeof ws[k] !== 'object') {
-                //console.log('bad set');
                 correct = false;
                 break;
               }
               if (ws[k].main) {
                 if (excluded.indexOf(ws[k].main) >= 0 || pw.main.indexOf(ws[k].main) < 0) {
-                  //console.log('bad main');
                   correct = false;
                   break;
                 }
@@ -300,7 +288,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               }
               if (ws[k].off && !isTwoHanded(ws[k].main)) {
                 if (excluded.indexOf(ws[k].off) >= 0 || pw.off.indexOf(ws[k].off) < 0) {
-                  //console.log('bad off');
                   correct = false;
                   break;
                 }
@@ -310,8 +297,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           }
         }
       if (correct) {
-        //console.log('before', data.builds);
-        //console.log('after', stripped_builds);
         data.builds = stripped_builds;
         data.modes = new_modes;
       }
@@ -369,14 +354,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       html += '>';
       html += displayBuild(data.builds[i]) + '</tr>';
     }
-    //console.log(html);
     table.innerHTML = html;
     addBuildListeners();
     const st = JSON.stringify(data);
     const json = document.getElementById('json');
     if (json)
       json.value = st;
-    //console.log(LZString.compressToUTF16(st));
+    if (!window.LZString) {
+      console.log('No github.com/pieroxy/lz-string, not storing data');
+      return;
+    }
     localStorage.setItem('gw2buildweapons', LZString.compressToUTF16(st));
   }
 
@@ -413,7 +400,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     professions.push(p);
   professions.sort();
   const compressed = localStorage.getItem('gw2buildweapons');
-  if (compressed)
+  if (compressed && window.LZString)
     parseJSONData(LZString.decompressFromUTF16(compressed));
   else {
     displayBuilds();
